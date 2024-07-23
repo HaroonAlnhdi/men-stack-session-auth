@@ -4,6 +4,7 @@ dotenv.config();
 const express = require("express");
 const app = express();
 
+const authController = require("./controllers/auth.js");
 
 const methodOverride = require("method-override");
 const morgan = require("morgan");
@@ -22,13 +23,15 @@ app.use(methodOverride("_method"));
 // Morgan for logging HTTP requests
 app.use(morgan('dev'));
 
-
+// Express app to use this authController for handling requests that match the /auth URL pattern.
+app.use("/auth", authController);
 
 // Route || landing page :
 
 app.get("/", async (req, res) => {
     res.render("index.ejs");
-  });
+});
+
 
 
 app.listen(port, () => {
