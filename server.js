@@ -3,11 +3,13 @@ const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
 const app = express();
+const session = require('express-session');
 
 const authController = require("./controllers/auth.js");
 
 const methodOverride = require("method-override");
 const morgan = require("morgan");
+const User = require("./models/user.js");
 
 require("./config/database"); // connect to database .. 
 
@@ -23,13 +25,23 @@ app.use(methodOverride("_method"));
 // Morgan for logging HTTP requests
 app.use(morgan('dev'));
 
+// set session :
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+ })
+);
+
 // Express app to use this authController for handling requests that match the /auth URL pattern.
 app.use("/auth", authController);
 
 // Route || landing page :
 
 app.get("/", async (req, res) => {
-    res.render("index.ejs");
+    res.render("index.ejs" , {
+        user:req.session.user,
+    });
 });
 
 
